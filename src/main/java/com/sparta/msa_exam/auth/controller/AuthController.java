@@ -42,5 +42,31 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(response);
      }
 
+     @PostMapping("/sign-in")
+     public ResponseEntity<ApiResponse<String>> signIn(@RequestBody SignInReqDto dto) {
+         // 사용자 인증
+         Authentication authentication = authenticationManager.authenticate(
+             new UsernamePasswordAuthenticationToken(dto.getName(), dto.getPassword())
+         );
+
+         // 권한 가져오기
+         String userRole = authentication.getAuthorities().stream()
+             .findFirst()  // 첫 번째 권한만 가져오기
+             .map(GrantedAuthority::getAuthority)  // 권한을 String으로 변환
+             .orElseThrow(() -> new RuntimeException("권한이 없습니다."));
+
+         // JWT 토큰 생성
+         String token = jwtProvider.crateToken(
+             authentication.getName(),
+             userRole
+         );
+
+         // 응답 헤더에 포트 번호 추가
+         HttpHeaders headers = new HttpHeaders();
+         headers.add("Server-Port", serverPort);
+
+         ApiResponse<String> response = new ApiResponse<>("success", "로그인 되었습니다.", token, null);
+         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
+     }
 
 }
