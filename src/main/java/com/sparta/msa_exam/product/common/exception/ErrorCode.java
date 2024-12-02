@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 오류입니다"),
 
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "P-001", "권한이 없습니다.");
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "P-001", "권한이 없습니다."),
+    ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "P-002", "이미 등록된 상품입니다.");
 
     private final HttpStatus httpStatus;
     private final String errorCode;
