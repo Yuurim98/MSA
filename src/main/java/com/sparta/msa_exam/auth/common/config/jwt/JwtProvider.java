@@ -4,6 +4,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +28,15 @@ public class JwtProvider {
 
     // JWT 생성
     public String crateToken(String userName, String userRole) {
+        String encodedUserName = Base64.getEncoder().encodeToString(userName.getBytes(
+            StandardCharsets.UTF_8));
         return Jwts.builder()
-            .claim("user_name", userName)
+            .claim("user_name", encodedUserName)
             .claim("user_roles", userRole)
             .issuer(issuer)
             .issuedAt(new Date((System.currentTimeMillis())))
             .expiration(new Date(System.currentTimeMillis() + accessExpiration))
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .signWith(secretKey, SignatureAlgorithm.HS256)
             .compact();
     }
 
