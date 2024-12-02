@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,11 +19,13 @@ public class Product {
     private Long id;
     private String name;
     private Integer supplyPrice;
+    private LocalDateTime createAt;
     private String createdBy;
 
     public Product(ProductReqDto dto, String userName) {
         this.name = dto.getName();
         this.supplyPrice = dto.getSupplyPrice();
+        this.createAt = LocalDateTime.now();
         this.createdBy = userName;
     }
 

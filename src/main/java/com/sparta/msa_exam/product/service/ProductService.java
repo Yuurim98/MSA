@@ -7,6 +7,10 @@ import com.sparta.msa_exam.product.entity.dto.ProductReqDto;
 import com.sparta.msa_exam.product.entity.dto.ProductResDto;
 import com.sparta.msa_exam.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,12 +27,15 @@ public class ProductService {
         Product product = new Product(dto, userName);
 
         productRepository.save(product);
-        return new ProductResDto(
-            product.getId(),
-            product.getName(),
-            product.getSupplyPrice(),
-            product.getCreatedBy()
-        );
+        return new ProductResDto(product);
     }
 
+    public Page<ProductResDto> getProductList(int page, int size, String sort, Direction direction) {
+        Pageable pageable = PageRequest.of(page, size, direction, sort);
+
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        return productPage.map(ProductResDto::new);
+
+    }
 }
