@@ -21,25 +21,28 @@ public class OrderService {
 
     public Long createOrder(OrderReqDto dto, String userName) {
 
-        List<Long> invalidProductIds = validProductIds(dto.getProductIds());
-
-        if (!validProductIds(dto.getProductIds()).isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_EXIST, invalidProductIds);
-        }
+        validProductIds(dto.getProductIds());
 
         Order order = orderRepository.save((new Order(userName, dto.getProductIds())));
         return order.getId();
     }
 
 
-    private List<Long> validProductIds(List<Long> productIds) {
+
+    private void validProductIds(List<Long> productIds) {
         // 상품 유효성
         List<ProductCheckResDto> productChecks = productClient.checkProductsExist(productIds);
 
         // 유효하지 않은 상품 확인
-        return productChecks.stream()
+        List<Long> invalidProductIds =  productChecks.stream()
             .filter(product -> !product.isExists())
             .map(ProductCheckResDto::getProductId)
             .toList();
+
+        if (!invalidProductIds.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_EXIST, invalidProductIds);
+        }
     }
+
+
 }
