@@ -7,7 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Entity
 public class OrderProduct {
 
@@ -18,5 +20,12 @@ public class OrderProduct {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    private Long productId;
+
+    public OrderProduct(Order order, Long productId) {
+        this.order = order;
+        this.productId = productId;
+    }
 }
 
