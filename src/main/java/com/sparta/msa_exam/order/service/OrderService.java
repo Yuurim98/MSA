@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -53,7 +54,9 @@ public class OrderService {
         return order.getId();
     }
 
+    @Cacheable(cacheNames = "itemCache", key = "args[0]")
     public OrderResDto getOder(Long id, String decodedUserName) {
+        log.info("처음 요청은 DB 조회");
         Order order = orderRepository.findById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_EXIST));
 
