@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +46,29 @@ public class OrderController {
         headers.add("Server-Port", serverPort);
 
         ApiResponse<Long> response = new ApiResponse<>("success", "주문 처리되었습니다", orderService.createOrder(dto, decodedUserName),
+            null);
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(response);
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Long>> updateOrder(
+        @PathVariable Long id,
+        @RequestBody OrderReqDto dto,
+        @RequestHeader("X-User-Name") String userNameHeader) {
+
+        // Base64로 인코딩된 값 디코딩
+        byte[] decodedBytes = Base64.getDecoder().decode(userNameHeader);
+        String decodedUserName = new String(decodedBytes, StandardCharsets.UTF_8);
+
+        log.info("RequestHeader : {}", decodedUserName);
+
+        // 응답 헤더에 포트 번호 추가
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Server-Port", serverPort);
+
+
+        ApiResponse<Long> response = new ApiResponse<>("success", "주문 추가되었습니다", orderService.updateOrder(id, dto, decodedUserName),
             null);
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(response);
 
