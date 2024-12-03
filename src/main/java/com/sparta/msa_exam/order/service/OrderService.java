@@ -5,6 +5,7 @@ import com.sparta.msa_exam.order.common.exception.ErrorCode;
 import com.sparta.msa_exam.order.entity.Order;
 import com.sparta.msa_exam.order.entity.OrderProduct;
 import com.sparta.msa_exam.order.entity.dto.OrderReqDto;
+import com.sparta.msa_exam.order.entity.dto.OrderResDto;
 import com.sparta.msa_exam.order.entity.dto.ProductCheckResDto;
 import com.sparta.msa_exam.order.repository.OrderRepository;
 import java.util.List;
@@ -50,6 +51,16 @@ public class OrderService {
 
         orderRepository.save(order);
         return order.getId();
+    }
+
+    public OrderResDto getOder(Long id, String decodedUserName) {
+        Order order = orderRepository.findById(id)
+            .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_EXIST));
+
+        if (!order.getOrderedBy().equals(decodedUserName)) {
+            throw new CustomException(ErrorCode.ORDER_NOT_MATCH_USER);
+        }
+        return OrderResDto.fromDto(order);
     }
 
 
