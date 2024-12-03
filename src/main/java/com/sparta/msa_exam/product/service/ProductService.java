@@ -3,9 +3,11 @@ package com.sparta.msa_exam.product.service;
 import com.sparta.msa_exam.product.common.exception.CustomException;
 import com.sparta.msa_exam.product.common.exception.ErrorCode;
 import com.sparta.msa_exam.product.entity.Product;
+import com.sparta.msa_exam.product.entity.dto.ProductCheckResDto;
 import com.sparta.msa_exam.product.entity.dto.ProductReqDto;
 import com.sparta.msa_exam.product.entity.dto.ProductResDto;
 import com.sparta.msa_exam.product.repository.ProductRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,5 +39,14 @@ public class ProductService {
 
         return productPage.map(ProductResDto::new);
 
+    }
+
+    public List<ProductCheckResDto> checkProductsExist(List<Long> productIds) {
+        return productIds.stream()
+            .map(productId -> new ProductCheckResDto(
+                productId,
+                productRepository.existsById(productId)
+            ))
+            .toList();
     }
 }

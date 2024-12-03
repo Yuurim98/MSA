@@ -3,11 +3,13 @@ package com.sparta.msa_exam.product.controller;
 import com.sparta.msa_exam.product.common.ApiResponse;
 import com.sparta.msa_exam.product.common.exception.CustomException;
 import com.sparta.msa_exam.product.common.exception.ErrorCode;
+import com.sparta.msa_exam.product.entity.dto.ProductCheckResDto;
 import com.sparta.msa_exam.product.entity.dto.ProductReqDto;
 import com.sparta.msa_exam.product.entity.dto.ProductResDto;
 import com.sparta.msa_exam.product.service.ProductService;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,6 +79,11 @@ public class ProductController {
         ApiResponse<Page<ProductResDto>> response = new ApiResponse<>("success", "", resDtoPage,
             null);
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(response);
+    }
+
+    @PostMapping("/check")
+    public List<ProductCheckResDto> checkProductsExist(@RequestBody List<Long> productIds) {
+        return productService.checkProductsExist(productIds);
     }
 
 }
